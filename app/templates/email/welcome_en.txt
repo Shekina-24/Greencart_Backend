@@ -1,0 +1,10 @@
+Subject: Welcome to {project_name}
+
+Hello {first_name},
+
+Welcome to {project_name}!
+
+We are excited to have you with us. Explore the catalogue, meet the producers, and place your first sustainable orders right away.
+
+See you soon,
+The {project_name} team

@@ -1,0 +1,10 @@
+Subject: Bienvenue sur {project_name}
+
+Bonjour {first_name},
+
+Bienvenue sur {project_name} !
+
+Nous sommes ravis de vous compter parmi nous. Vous pouvez dès à présent explorer le catalogue, découvrir les producteurs et passer vos premières commandes responsables.
+
+À très vite,
+L'équipe {project_name}

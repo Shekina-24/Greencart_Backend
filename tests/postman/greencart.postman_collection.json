@@ -1,0 +1,924 @@
+{
+  "info": {
+    "name": "GreenCart API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection de tests pour l'API GreenCart"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Consumer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{consumer_email}}\",\n  \"password\": \"{{consumer_password}}\",\n  \"role\": \"consumer\",\n  \"first_name\": \"{{consumer_first_name}}\",\n  \"locale\": \"{{consumer_locale}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\",\n  \"role\": \"admin\",\n  \"first_name\": \"{{admin_first_name}}\",\n  \"locale\": \"{{admin_locale}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Consumer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{consumer_email}}\",\n  \"password\": \"{{consumer_password}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('consumer_access_token', jsonData.access_token);",
+                  "pm.environment.set('consumer_refresh_token', jsonData.refresh_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('admin_access_token', jsonData.access_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Consumer Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{consumer_refresh_token}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('consumer_access_token', jsonData.access_token);",
+                  "pm.environment.set('consumer_refresh_token', jsonData.refresh_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Consumer Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Producer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{producer_email}}\",\n  \"password\": \"{{producer_password}}\",\n  \"role\": \"producer\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Producer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{producer_email}}\",\n  \"password\": \"{{producer_password}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('producer_access_token', jsonData.access_token);",
+                  "pm.environment.set('producer_refresh_token', jsonData.refresh_token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "Create Product (Producer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{producer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{product_title}}\",\n  \"description\": \"{{product_description}}\",\n  \"category\": \"{{product_category}}\",\n  \"region\": \"{{product_region}}\",\n  \"price_cents\": \"{{product_price_cents}}\",\n  \"promo_price_cents\": \"{{product_promo_price_cents}}\",\n  \"stock\": \"{{product_stock}}\",\n  \"status\": \"published\",\n  \"is_published\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('product_id', jsonData.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Producer",
+      "item": [
+        {
+          "name": "List My Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{producer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/producer/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "producer",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Producer Insights",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{producer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/producer/insights",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "producer",
+                "insights"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart & Orders",
+      "item": [
+        {
+          "name": "Update Cart",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"product_id\": \"{{product_id}}\",\n    \"quantity\": \"{{cart_quantity}}\"\n  }\n]"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$uuid}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": \"{{product_id}}\",\n      \"quantity\": 1\n    }\n  ],\n  \"notes\": \"{{order_notes}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('order_id', jsonData.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "if (Array.isArray(jsonData.items)) {",
+                  "  jsonData.items.forEach(order => {",
+                  "    if (Array.isArray(order.lines)) {",
+                  "      order.lines.forEach(line => {",
+                  "        pm.expect(line, 'line should expose reference price').to.have.property('reference_price_cents');",
+                  "        if (typeof line.reference_price_cents === 'number' && typeof line.unit_price_cents === 'number') {",
+                  "          pm.expect(line.reference_price_cents).to.be.at.least(line.unit_price_cents);",
+                  "        }",
+                  "      });",
+                  "    }",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Init Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/init",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "init"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"{{order_id}}\",\n  \"provider\": \"{{payment_provider}}\",\n  \"success_url\": \"{{success_url}}\",\n  \"cancel_url\": \"{{cancel_url}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Webhook (Success)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/webhook",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "webhook"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"{{payment_provider}}\",\n  \"order_id\": \"{{order_id}}\",\n  \"event\": \"payment_succeeded\",\n  \"signature\": \"demo-signature\",\n  \"payload\": {\n    \"payment_intent\": \"demo\"\n  }\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"rating\": 5,\n  \"comment\": \"{{review_comment}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Product Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/product/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews",
+                "product",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Track Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "analytics",
+                "events"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_name\": \"product_view\",\n  \"source\": \"{{event_source}}\",\n  \"properties\": {\n    \"product_id\": \"{{product_id}}\"\n  }\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json(); pm.environment.set('analytics_event_id', jsonData.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GDPR",
+      "item": [
+        {
+          "name": "Export My Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/gdpr/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "gdpr",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Erase My Data",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/gdpr/erase",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "gdpr",
+                "erase"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{consumer_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"{{consumer_first_name}}\",\n  \"consent_analytics\": true\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Generate Sales Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/reports/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "reports",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "period_start",
+                  "value": "{{report_period_start}}",
+                  "disabled": true
+                },
+                {
+                  "key": "period_end",
+                  "value": "{{report_period_end}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Rate Limit Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/reports/rate-limit-metrics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "reports",
+                "rate-limit-metrics"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const keys = [",
+          "  'base_url',",
+          "  'consumer_email','consumer_password','consumer_first_name','consumer_locale',",
+          "  'producer_email','producer_password','producer_locale',",
+          "  'product_title','product_description','product_category','product_region','product_price_cents','product_promo_price_cents','product_stock',",
+          "  'cart_quantity','order_notes','payment_provider','success_url','cancel_url','review_comment','event_source',",
+          "  'admin_email','admin_password','admin_first_name','admin_locale','report_period_start','report_period_end'",
+          "];",
+          "const iterationConfig = pm.iterationData.toObject();",
+          "keys.forEach(function(key) {",
+          "  if (Object.prototype.hasOwnProperty.call(iterationConfig, key) && iterationConfig[key] !== undefined && iterationConfig[key] !== null && iterationConfig[key] !== '') {",
+          "    pm.environment.set(key, iterationConfig[key]);",
+          "  }",
+          "});",
+          "",
+          "if (!pm.environment.get('product_promo_price_cents')) {",
+          "  pm.environment.set('product_promo_price_cents', pm.environment.get('product_price_cents'));",
+          "}",
+          "const baseUrl = pm.environment.get('base_url');",
+          "const adminEmail = pm.environment.get('admin_email');",
+          "const adminPassword = pm.environment.get('admin_password');",
+          "if (baseUrl && adminEmail && adminPassword && pm.environment.get('admin_seeded') !== 'true') {",
+          "  const requestOptions = {",
+          "    url: baseUrl + '/auth/register',",
+          "    method: 'POST',",
+          "    header: { 'Content-Type': 'application/json' },",
+          "    body: {",
+          "      mode: 'raw',",
+          "      raw: JSON.stringify({",
+          "        email: adminEmail,",
+          "        password: adminPassword,",
+          "        role: 'admin',",
+          "        first_name: pm.environment.get('admin_first_name') || 'Admin',",
+          "        locale: pm.environment.get('admin_locale') || 'fr'",
+          "      })",
+          "    },",
+          "    timeout: 5000",
+          "  };",
+          "  pm.sendRequest(requestOptions, function (err, res) {",
+          "    if (!err && res && (res.code === 201 || res.code === 409)) {",
+          "      pm.environment.set('admin_seeded', 'true');",
+          "    }",
+          "  });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+Subject: Confirmation de votre commande #{order_id}
+
+Bonjour {first_name},
+
+Merci pour votre commande #{order_id} passée le {order_date}.
+
+Montant total : {total_amount}
+Articles :
+{order_lines}
+
+Nous vous préviendrons dès que votre commande sera expédiée.
+
+Merci pour votre confiance,
+L'équipe {project_name}

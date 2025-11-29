@@ -1,0 +1,14 @@
+Subject: Your order #{order_id} confirmation
+
+Hello {first_name},
+
+Thank you for your order #{order_id} placed on {order_date}.
+
+Total amount: {total_amount}
+Items:
+{order_lines}
+
+We will notify you as soon as your order is on its way.
+
+Thank you for choosing {project_name},
+The {project_name} team
