@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = Field(
-        default="sqlite+aiosqlite:///./greencart.db",
+        default="mysql+aiomysql://root:GoPQyeTyXxIsDrUlksipYlHEidzGhNPb@shortline.proxy.rlwy.net:37012/railway",
         validation_alias=AliasChoices("DATABASE_URL"),
     )
 
