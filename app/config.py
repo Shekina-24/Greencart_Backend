@@ -164,14 +164,14 @@ class Settings(BaseSettings):
         """Return normalized CORS origins list from CSV or JSON env value."""
         raw = self.cors_origins_raw
         if raw is None or raw == "":
-            return ["https://greencart-front-end.vercel.app",
+            return ["https://greencartfrontend-six.vercel.app/",
                     "http://localhost:3000",
                     "http://127.0.0.1:5500",]
         if isinstance(raw, str):
             origins = _split_csv(raw)
             return origins or ["http://127.0.0.1:5500",
                                 "http://localhost:3000",
-                               "https://greencart-front-end.vercel.app",]
+                               "https://greencartfrontend-six.vercel.app/",]
         return [str(item).strip() for item in raw if str(item).strip()]
 
     @computed_field(return_type=Dict[str, Tuple[int, int]])
