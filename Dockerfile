@@ -15,8 +15,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn", "-c", 
-    "gunicorn app.main:app \
-        -k uvicorn.workers.UvicornWorker \
-        -b 0.0.0.0:8000 \
-        --workers 3"]
+CMD ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "--workers", "3"]
