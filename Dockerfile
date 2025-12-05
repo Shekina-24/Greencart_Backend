@@ -15,4 +15,8 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn", "-c", "app/gunicorn.conf.py", "app.main:app"]
+ENTRYPOINT ["gunicorn", "-c", 
+    "gunicorn app.main:app \
+        -k uvicorn.workers.UvicornWorker \
+        -b 0.0.0.0:8000 \
+        --workers 3"]
