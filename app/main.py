@@ -12,7 +12,6 @@ from .config import settings
 from .database import init_db
 from .jobs.monthly_reports import run_monthly_sales_report
 
-
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     await init_db()
@@ -42,7 +41,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins= "https://greencartfrontend-six.vercel.app/",
+    #allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
