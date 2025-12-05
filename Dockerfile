@@ -13,6 +13,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 50505
+EXPOSE 8000
 
 ENTRYPOINT ["gunicorn", "-c", "app/gunicorn.conf.py", "app.main:app"]
