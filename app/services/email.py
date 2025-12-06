@@ -41,10 +41,13 @@ async def send_email(
     subtype: str = "plain",
 ) -> None:
     if not settings.mailjet_api_key or not settings.mailjet_api_secret:
-        raise EmailNotConfiguredError("Mailjet API settings missing")
+        #raise EmailNotConfiguredError("Mailjet API settings missing")
+        logger.warning("Mailjet API settings missing")
+        return
     from_email = settings.mailjet_from_email or settings.email_sender
     if not from_email:
-        raise EmailNotConfiguredError("Sender email missing")
+        #raise EmailNotConfiguredError("Sender email missing")
+        logger.warning("Sender email missing")
 
     payload = {
         "Messages": [
