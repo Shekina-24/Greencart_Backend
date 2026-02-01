@@ -11,16 +11,11 @@ class Base(DeclarativeBase):
     """Base class for all ORM models."""
 
 
-#_engine_kwargs: dict = {
-#    "echo": settings.debug,
-#    "future": True,
-#    "pool_pre_ping": True,  # drop dead connections before use
-#    "pool_recycle": 1800,  # recycle connections to avoid server/proxy timeouts
-#}
-
-_engine_kwargs = {
-    "pool_pre_ping": True,
-    "pool_recycle": 1800,
+_engine_kwargs: dict = {
+    "echo": settings.debug,
+    "future": True,
+    "pool_pre_ping": True,  # drop dead connections before use
+   "pool_recycle": 1800,  # recycle connections to avoid server/proxy timeouts
     "connect_args": {
         "ssl": {"check_hostname": False}
     },
