@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = Field(
-        default="mysql+aiomysql://root:GoPQyeTyXxIsDrUlksipYlHEidzGhNPb@shortline.proxy.rlwy.net:37012/railway",
+        default="mysql+aiomysql://root:UWJVLTdOrHgKDDBHrKlsNghhYaXGAImV@tramway.proxy.rlwy.net:24731/railway",
         validation_alias=AliasChoices("DATABASE_URL"),
     )
 
