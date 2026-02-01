@@ -1,6 +1,7 @@
 from collections.abc import AsyncIterator
+import ssl
 
-from sqlalchemy import event
+from sqlalchemy import event, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -11,15 +12,23 @@ class Base(DeclarativeBase):
     """Base class for all ORM models."""
 
 
+# --- SSL context (IMPORTANT): uvloop/aiomysql needs an SSLContext, not a dict.
+_ssl_ctx = None
+if settings.database_url.startswith("mysql"):
+    _ssl_ctx = ssl.create_default_context()
+    _ssl_ctx.check_hostname = False
+    _ssl_ctx.verify_mode = ssl.CERT_NONE  # accept self-signed certs
+
+
 _engine_kwargs: dict = {
     "echo": settings.debug,
     "future": True,
     "pool_pre_ping": True,  # drop dead connections before use
-   "pool_recycle": 1800,  # recycle connections to avoid server/proxy timeouts
-    "connect_args": {
-        "ssl": {"check_hostname": False}
-    },
+    "pool_recycle": 1800,   # recycle connections to avoid server/proxy timeouts
 }
+
+if _ssl_ctx is not None:
+    _engine_kwargs["connect_args"] = {"ssl": _ssl_ctx}
 
 if settings.database_url.startswith("mysql"):
     # Keep the pool small for hosted MySQL and avoid long waits on dead sockets.
@@ -49,8 +58,9 @@ async def get_db() -> AsyncIterator[AsyncSession]:
 
 async def init_db() -> None:
     """Create database tables on application startup."""
-    # Ensure models are imported before creating tables.
     import app.models  # noqa: F401
 
+    # Optional: quick ping before create_all to fail fast with a clearer error
     async with engine.begin() as conn:
+        await conn.execute(text("SELECT 1"))
         await conn.run_sync(Base.metadata.create_all)
