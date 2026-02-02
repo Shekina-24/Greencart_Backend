@@ -57,7 +57,7 @@ _STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
-# Mount generated reports for download (read-only)
+# Mount 
 _REPORTS_DIR = _BASE_DIR / "generated_reports"
 _REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/reports", StaticFiles(directory=str(_REPORTS_DIR)), name="reports")
