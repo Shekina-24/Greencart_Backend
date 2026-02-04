@@ -1,18 +1,17 @@
 # syntax=docker/dockerfile:1
-
 FROM python:3.11-slim
-
-
-#FROM python:3.10
 
 WORKDIR /code
 
+# Install deps
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt
-
+# Copy app
 COPY . .
 
-EXPOSE 8000
+# Railway fournit PORT
+ENV PORT=8000
 
-CMD ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "--workers", "3"]
+# Start with gunicorn + uvicorn worker
+CMD ["sh", "-c", "gunicorn app.main:app -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT} --workers 3"]

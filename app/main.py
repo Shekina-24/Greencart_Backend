@@ -12,6 +12,7 @@ from .config import settings
 from .database import init_db
 from .jobs.monthly_reports import run_monthly_sales_report
 
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     await init_db()
@@ -39,14 +40,16 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ✅ CORS: autorise le front en local + prod Vercel
 app.add_middleware(
     CORSMiddleware,
-    allow_origins= ["https://greencartfrontend-six.vercel.app",],
-    #allow_origins=settings.cors_origins,
+    allow_origins=settings.cors_origins,  # <-- pilote par env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 app.include_router(api_router, prefix=settings.api_v1_str)
 
@@ -57,7 +60,7 @@ _STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
-# Mount 
+# Mount generated reports
 _REPORTS_DIR = _BASE_DIR / "generated_reports"
 _REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/reports", StaticFiles(directory=str(_REPORTS_DIR)), name="reports")
