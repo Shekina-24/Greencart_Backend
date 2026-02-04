@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+import os
 
 def _split_csv(value: str) -> List[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
@@ -132,5 +133,6 @@ class Settings(BaseSettings):
                 continue
         return rules
 
-
+print(">>> ENV DATABASE_URL =", os.getenv("DATABASE_URL"))
+print(">>> ENV JWT_SECRET   =", os.getenv("JWT_SECRET"))
 settings = Settings()
