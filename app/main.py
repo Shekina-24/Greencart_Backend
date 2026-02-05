@@ -80,14 +80,21 @@ if __name__ == "__main__":
     import uvicorn
     import os
     
-    # Railway fournit le port via la variable d'environnement PORT
+    # Debug : affichons toutes les variables d'environnement importantes
+    print("=" * 50)
+    print("🔍 DEBUG ENVIRONMENT VARIABLES")
+    print(f"PORT env var = {os.environ.get('PORT', 'NOT SET')}")
+    print(f"All env vars containing 'PORT': {[k for k in os.environ.keys() if 'PORT' in k]}")
+    print("=" * 50)
+    
     port = int(os.environ.get("PORT", 8000))
     print(f"🚀 Starting server on port {port}")
     
     uvicorn.run(
-        app,  # ← Changez ici : utilisez directement l'objet 'app' au lieu de "app.main:app"
+        app,
         host="0.0.0.0",
         port=port,
         log_level="info"
     )
+
 
