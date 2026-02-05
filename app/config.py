@@ -1,11 +1,23 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Dict, List, Tuple
+
+# ⚡ FORCER LE CHARGEMENT DU .env.dev AVANT TOUT
+from dotenv import load_dotenv
+
+# Charger .env.dev depuis la racine du projet
+env_path = Path(__file__).parent.parent / ".env.dev"
+loaded = load_dotenv(dotenv_path=env_path, override=True)
+print(f"🔍 Tentative de chargement de .env.dev depuis: {env_path}")
+print(f"🔍 Fichier .env.dev chargé: {'OUI ✅' if loaded else 'NON ❌'}")
+# FIN DU CHARGEMENT FORCÉ
+
+import os
 
 from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-import os
 
 def _split_csv(value: str) -> List[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
@@ -15,7 +27,7 @@ class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
 
     # ⚠️ IMPORTANT :
-    # - En local : lit .env.dev
+    # - En local : lit .env.dev (forcé via dotenv ci-dessus)
     # - En prod (Railway) : ignore .env.dev et lit UNIQUEMENT les variables Railway
     model_config = SettingsConfigDict(
         env_file=".env.dev",
@@ -133,6 +145,19 @@ class Settings(BaseSettings):
                 continue
         return rules
 
-print(">>> ENV DATABASE_URL =", os.getenv("DATABASE_URL"))
-print(">>> ENV JWT_SECRET   =", os.getenv("JWT_SECRET"))
+
+# Debug : affichage après chargement de dotenv
+print("=" * 60)
+print("🔍 VÉRIFICATION DES VARIABLES D'ENVIRONNEMENT")
+print("=" * 60)
+print(f"DATABASE_URL = {os.getenv('DATABASE_URL', 'NOT SET ❌')[:50]}...")
+print(f"JWT_SECRET   = {os.getenv('JWT_SECRET', 'NOT SET ❌')[:30]}...")
+print("=" * 60)
+
+# Créer l'instance settings
 settings = Settings()
+
+print("✅ Settings créés avec succès!")
+print(f"📊 Database URL chargé: {settings.database_url[:50]}...")
+print(f"🔐 JWT Secret chargé: {settings.jwt_secret[:20]}...")
+print("=" * 60)
