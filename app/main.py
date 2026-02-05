@@ -1,11 +1,14 @@
+from __future__ import annotations
+
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
 
 from .api.v1.api import api_router
 from .config import settings
@@ -14,9 +17,19 @@ from .jobs.monthly_reports import run_monthly_sales_report
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
-    await init_db()
+async def lifespan(app: FastAPI):
+    """
+    Lifespan startup/shutdown.
 
+    - En prod: ne doit pas bloquer si la DB n'est pas prête.
+    - init_db() ne doit être lancé que si AUTO_CREATE_DB=true.
+    """
+
+    # ✅ Init DB uniquement si demandé (local/dev)
+    if os.getenv("AUTO_CREATE_DB", "false").lower() == "true":
+        await init_db()
+
+    # ✅ Scheduler (optionnel)
     scheduler = AsyncIOScheduler(timezone="UTC")
     if settings.enable_monthly_reports:
         scheduler.add_job(
@@ -40,35 +53,30 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-from fastapi import FastAPI
-
-app = FastAPI()
-
+# --- Health / ping ---
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
 
-# ✅ CORS: autorise le front en local + prod Vercel
+
+# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,  # <-- pilote par env
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-
+# --- API routes ---
 app.include_router(api_router, prefix=settings.api_v1_str)
 
-# Ensure the static directory exists (for uploaded images)
-_BASE_DIR = Path(__file__).resolve().parent.parent  # project root (greencart_backend)
+# --- Static folders ---
+_BASE_DIR = Path(__file__).resolve().parent.parent  # project root
 _STATIC_DIR = _BASE_DIR / "static"
 _STATIC_DIR.mkdir(parents=True, exist_ok=True)
-
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
-# Mount generated reports
 _REPORTS_DIR = _BASE_DIR / "generated_reports"
 _REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/reports", StaticFiles(directory=str(_REPORTS_DIR)), name="reports")
