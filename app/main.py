@@ -17,19 +17,11 @@ from .jobs.monthly_reports import run_monthly_sales_report
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Lifespan startup/shutdown.
-
-    - En prod: ne doit pas bloquer si la DB n'est pas prête.
-    - init_db() ne doit être lancé que si AUTO_CREATE_DB=true.
-    """
-
-    # ✅ Init DB uniquement si demandé (local/dev)
+async def lifespan(_: FastAPI):
+    # Init DB uniquement si demandé (local/dev)
     if os.getenv("AUTO_CREATE_DB", "false").lower() == "true":
         await init_db()
 
-    # ✅ Scheduler (optionnel)
     scheduler = AsyncIOScheduler(timezone="UTC")
     if settings.enable_monthly_reports:
         scheduler.add_job(
@@ -53,13 +45,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# --- Health / ping ---
+
+@app.get("/")
+def root():
+    return {"message": "Greencart backend is running"}
+
+
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
 
 
-# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -68,11 +64,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- API routes ---
 app.include_router(api_router, prefix=settings.api_v1_str)
 
-# --- Static folders ---
-_BASE_DIR = Path(__file__).resolve().parent.parent  # project root
+_BASE_DIR = Path(__file__).resolve().parent
+
 _STATIC_DIR = _BASE_DIR / "static"
 _STATIC_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
