@@ -75,3 +75,16 @@ app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 _REPORTS_DIR = _BASE_DIR / "generated_reports"
 _REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/reports", StaticFiles(directory=str(_REPORTS_DIR)), name="reports")
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=port,
+        log_level="info"
+    )
+
