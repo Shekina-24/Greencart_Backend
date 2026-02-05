@@ -40,6 +40,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
+
 # ✅ CORS: autorise le front en local + prod Vercel
 app.add_middleware(
     CORSMiddleware,
