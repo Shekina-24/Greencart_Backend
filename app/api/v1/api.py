@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 
 from .endpoints import admin_refs, admin_reports, admin_reviews, admin_users, analytics, auth, cart, gdpr, health, orders, payments, producers, products, public_data, reviews, users, uploads
+from app.api.v1.endpoints import email_test
 
 api_router = APIRouter()
+api_router.include_router(email_test.router)
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(auth.router)
 api_router.include_router(products.router)

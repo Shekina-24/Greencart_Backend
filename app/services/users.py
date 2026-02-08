@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.security import hash_password, verify_password
 from ..models import ProducerProfile, ProducerStatus, User, UserRole
 from ..schemas import UserCreate, UserUpdate
+from app.core.time import utcnow
+
 
 
 class UserAlreadyExistsError(Exception):
@@ -24,6 +24,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     existing = await get_user_by_email(db, user_in.email)
     if existing:
         raise UserAlreadyExistsError("Email already registered")
+    full_name = f"{(user_in.first_name or '').strip()} {(user_in.last_name or '').strip()}".strip()
 
     user = User(
         email=user_in.email.lower(),
@@ -31,6 +32,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
         role=user_in.role,
         first_name=user_in.first_name,
         last_name=user_in.last_name,
+        full_name=full_name,
         region=user_in.region,
         consent_newsletter=user_in.consent_newsletter,
         consent_analytics=user_in.consent_analytics,
@@ -56,7 +58,7 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
 
 
 async def touch_last_login(db: AsyncSession, user: User) -> None:
-    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_at = utcnow()
     db.add(user)
     await db.commit()
 
@@ -72,6 +74,8 @@ async def update_user(db: AsyncSession, user: User, payload: UserUpdate) -> User
         user.consent_newsletter = payload.consent_newsletter
     if payload.consent_analytics is not None:
         user.consent_analytics = payload.consent_analytics
+    if payload.first_name is not None or payload.last_name is not None:
+        user.full_name = f"{(user.first_name or '').strip()} {(user.last_name or '').strip()}".strip()
 
     db.add(user)
     await db.commit()

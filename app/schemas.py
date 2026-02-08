@@ -1,15 +1,37 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+
 from typing import Literal, Optional
 
-from pydantic import AnyHttpUrl, BaseModel, EmailStr, Field, model_validator
 
 from .models import OrderStatus, ProducerStatus, ProductStatus, ReviewStatus, UserRole
 
+from datetime import date, datetime, timezone
+from pydantic import AnyHttpUrl, BaseModel, EmailStr, Field, model_validator, model_serializer
+from typing import Any
+
+def _dt_to_utc_z(dt: datetime) -> str:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    dt = dt.astimezone(timezone.utc).replace(microsecond=0)
+    return dt.isoformat().replace("+00:00", "Z")
+
+def _convert_datetimes(obj: Any):
+    if isinstance(obj, datetime):
+        return _dt_to_utc_z(obj)
+    if isinstance(obj, list):
+        return [_convert_datetimes(x) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _convert_datetimes(v) for k, v in obj.items()}
+    return obj
 
 class ORMModel(BaseModel):
     model_config = {"from_attributes": True}
+
+    @model_serializer(mode="wrap")
+    def _serialize(self, handler):
+        data = handler(self)
+        return _convert_datetimes(data)
 
 
 # --- Users & Auth ---
@@ -49,6 +71,7 @@ class UserRead(ORMModel):
     id: int
     email: EmailStr
     role: UserRole
+    full_name: Optional[str] = None # ✅ AJOUT OBLIGATOIRE
     first_name: Optional[str]
     last_name: Optional[str]
     region: Optional[str]
@@ -59,6 +82,7 @@ class UserRead(ORMModel):
     consent_analytics: bool
     created_at: datetime
     updated_at: datetime
+
 
 
 class Token(ORMModel):

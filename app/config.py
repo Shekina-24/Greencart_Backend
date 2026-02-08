@@ -1,19 +1,8 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Dict, List, Tuple
-
-# ⚡ FORCER LE CHARGEMENT DU .env.dev AVANT TOUT
-from dotenv import load_dotenv
-
-# Charger .env.dev depuis la racine du projet
-env_path = Path(__file__).parent.parent / ".env.dev"
-loaded = load_dotenv(dotenv_path=env_path, override=True)
-print(f"🔍 Tentative de chargement de .env.dev depuis: {env_path}")
-print(f"🔍 Fichier .env.dev chargé: {'OUI ✅' if loaded else 'NON ❌'}")
-# FIN DU CHARGEMENT FORCÉ
-
-import os
 
 from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,15 +12,32 @@ def _split_csv(value: str) -> List[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+# =====================================================
+# ✅ Chargement .env.dev uniquement en LOCAL
+# - En Railway/prod : on ne charge rien, on lit les variables Railway
+# - En local : si .env.dev existe, on le charge sans écraser l'environnement
+# =====================================================
+def _load_local_env() -> None:
+    env = os.getenv("ENV", "").lower()  # tu peux mettre ENV=local sur ton PC
+    if env in {"local", "dev"}:
+        try:
+            from dotenv import load_dotenv
+        except ImportError:
+            return
+
+        env_path = Path(__file__).parent.parent / ".env.dev"
+        if env_path.exists():
+            load_dotenv(dotenv_path=env_path, override=False)
+
+
+_load_local_env()
+
+
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
 
-    # ⚠️ IMPORTANT :
-    # - En local : lit .env.dev (forcé via dotenv ci-dessus)
-    # - En prod (Railway) : ignore .env.dev et lit UNIQUEMENT les variables Railway
     model_config = SettingsConfigDict(
-        env_file=".env.dev",
-        env_file_encoding="utf-8",
+        
         extra="ignore",
     )
 
@@ -70,8 +76,10 @@ class Settings(BaseSettings):
     )
 
     # -----------------
-    # Email
+    # Email (SMTP + templates) — ✅ 1 seule fois (plus de doublon)
     # -----------------
+    email_enabled: bool = Field(default=False, alias="EMAIL_ENABLED")
+    email_template_dir: str = Field(default="app/email_templates", alias="EMAIL_TEMPLATE_DIR")
     email_sender: str | None = Field(default=None, alias="EMAIL_SENDER")
     smtp_host: str | None = Field(default=None, alias="SMTP_HOST")
     smtp_port: int = Field(default=587, alias="SMTP_PORT")
@@ -108,17 +116,12 @@ class Settings(BaseSettings):
     @computed_field(return_type=List[str])
     @property
     def cors_origins(self) -> List[str]:
-        """
-        Normalise CORS origins.
-        """
+        """Normalise CORS origins."""
         raw = self.cors_origins_raw
-
         if raw is None or raw == "":
             return []
-
         if isinstance(raw, str):
             return _split_csv(raw)
-
         return [str(item).strip() for item in raw if str(item).strip()]
 
     @computed_field(return_type=Dict[str, Tuple[int, int]])
@@ -146,18 +149,5 @@ class Settings(BaseSettings):
         return rules
 
 
-# Debug : affichage après chargement de dotenv
-print("=" * 60)
-print("🔍 VÉRIFICATION DES VARIABLES D'ENVIRONNEMENT")
-print("=" * 60)
-print(f"DATABASE_URL = {os.getenv('DATABASE_URL', 'NOT SET ❌')[:50]}...")
-print(f"JWT_SECRET   = {os.getenv('JWT_SECRET', 'NOT SET ❌')[:30]}...")
-print("=" * 60)
-
-# Créer l'instance settings
+# ✅ Instance unique
 settings = Settings()
-
-print("✅ Settings créés avec succès!")
-print(f"📊 Database URL chargé: {settings.database_url[:50]}...")
-print(f"🔐 JWT Secret chargé: {settings.jwt_secret[:20]}...")
-print("=" * 60)

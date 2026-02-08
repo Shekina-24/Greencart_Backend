@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
+from app.config import settings # ✅ AJOUT: pour activer/désactiver l’email
 from app.core.security import (
     InvalidTokenError,
     create_access_token,
@@ -47,14 +48,18 @@ async def register_user(
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent"),
     )
-    try:
-        await email_service.send_welcome_email(
-            to=user.email,
-            first_name=user.first_name,
-            locale=getattr(user, "locale", None),
-        )
-    except EmailSendError as exc:
-        logger.warning("Welcome email failed for %s: %s", user.email, exc)
+
+    # ✅ FIX: ne tente pas d’envoyer d’email si désactivé (dev)
+    if settings.email_enabled:
+        try:
+            await email_service.send_welcome_email(
+                to=user.email,
+                first_name=user.first_name,
+                locale=getattr(user, "locale", None),
+            )
+        except EmailSendError as exc:
+            logger.warning("Welcome email failed for %s: %s", user.email, exc)
+
     return UserRead.model_validate(user)
 
 

@@ -113,3 +113,5 @@ async def init_db(*, timeout_seconds: int = 5) -> None:
     except Exception:
         # Don't crash the whole API because DB init failed
         logger.exception("DB init failed (startup continues).")
+
+print("DATABASE_URL =", settings.database_url)

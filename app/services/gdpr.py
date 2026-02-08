@@ -10,6 +10,8 @@ from sqlalchemy.orm import selectinload
 
 from ..models import Order, OrderLine, Review, User
 
+from app.core.time import to_utc_iso
+
 
 async def export_user_data(db: AsyncSession, user: User) -> Dict[str, Any]:
     user_data = {
@@ -21,8 +23,9 @@ async def export_user_data(db: AsyncSession, user: User) -> Dict[str, Any]:
             "region": user.region,
             "consent_newsletter": user.consent_newsletter,
             "consent_analytics": user.consent_analytics,
-            "created_at": user.created_at.isoformat(),
-            "updated_at": user.updated_at.isoformat(),
+            "created_at": to_utc_iso(user.created_at),
+            "updated_at": to_utc_iso(user.updated_at),
+            "last_login_at": to_utc_iso(user.last_login_at),
         }
     }
 

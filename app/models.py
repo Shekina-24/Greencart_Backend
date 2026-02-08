@@ -80,6 +80,7 @@ class User(Base, TimestampMixin):
     role: Mapped[UserRole] = mapped_column(SQLEnum(UserRole), default=UserRole.CONSUMER, nullable=False)
     first_name: Mapped[str | None] = mapped_column(String(120))
     last_name: Mapped[str | None] = mapped_column(String(120))
+    full_name: Mapped[str | None] = mapped_column(String(255))
     region: Mapped[str | None] = mapped_column(String(120))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
