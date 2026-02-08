@@ -76,8 +76,4 @@ _REPORTS_DIR = _BASE_DIR / "generated_reports"
 _REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/reports", StaticFiles(directory=str(_REPORTS_DIR)), name="reports")
 
-@app.get("/")
-def root():
-    return {"status": "ok"}
-
 
