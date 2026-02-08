@@ -7,7 +7,7 @@ if __name__ == "__main__":
     print(f"PORT = {os.environ.get('PORT', 'NOT SET')}")
     print("=" * 50)
     
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 8080))
     print(f"🚀 Starting on port {port}")
     
     uvicorn.run(
