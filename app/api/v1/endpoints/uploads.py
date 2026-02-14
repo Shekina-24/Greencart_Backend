@@ -20,7 +20,8 @@ async def upload_image(file: UploadFile = File(...)) -> dict[str, str]:
         "image/gif": ".gif",
     }.get(file.content_type, ".bin")
 
-    uploads_dir = Path("static") / "uploads"
+    _APP_DIR = Path(__file__).resolve().parent.parent.parent.parent  # app/api/v1/endpoints → app/
+    uploads_dir = _APP_DIR / "static" / "uploads"
     uploads_dir.mkdir(parents=True, exist_ok=True)
 
     import uuid
