@@ -1,39 +1,30 @@
 from __future__ import annotations
 
-from pathlib import Path
-
+import cloudinary
+import cloudinary.uploader
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
+
+from app.config import settings
 
 router = APIRouter(prefix="/uploads", tags=["uploads"])
 
 
 @router.post("/image", status_code=status.HTTP_201_CREATED)
 async def upload_image(file: UploadFile = File(...)) -> dict[str, str]:
-    """Accept an image upload and return a public URL (served from /static)."""
+    """Upload une image vers Cloudinary et retourne son URL publique."""
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image file")
-
-    suffix = {
-        "image/jpeg": ".jpg",
-        "image/png": ".png",
-        "image/webp": ".webp",
-        "image/gif": ".gif",
-    }.get(file.content_type, ".bin")
-
-    _APP_DIR = Path(__file__).resolve().parent.parent.parent.parent  # app/api/v1/endpoints → app/
-    uploads_dir = _APP_DIR / "static" / "uploads"
-    uploads_dir.mkdir(parents=True, exist_ok=True)
-
-    import uuid
-
-    filename = f"{uuid.uuid4().hex}{suffix}"
-    dest = uploads_dir / filename
 
     contents = await file.read()
     if not contents:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty file")
-    dest.write_bytes(contents)
 
-    # Front can prefix with API base
-    return {"url": f"/static/uploads/{filename}"}
+    if settings.cloudinary_url:
+        cloudinary.config(cloudinary_url=settings.cloudinary_url)
 
+    result = cloudinary.uploader.upload(
+        contents,
+        folder="greencart/products",
+        resource_type="image",
+    )
+    return {"url": result["secure_url"]}

@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     project_name: str = Field(default="Greencart API", alias="PROJECT_NAME")
     debug: bool = Field(default=False, alias="DEBUG")
     api_v1_str: str = Field(default="/api/v1", alias="API_V1_STR")
+    cloudinary_url: str | None = Field(default=None, alias="CLOUDINARY_URL")
 
     # -----------------
     # Database (⚠️ PAS DE DEFAULT EN PROD)
