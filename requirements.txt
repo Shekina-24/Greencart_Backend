@@ -21,3 +21,4 @@ pytest>=4.4.0
 fpdf2>=2.7
 stripe>=10.0
 apscheduler>=3.10
+cloudinary

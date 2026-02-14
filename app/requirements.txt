@@ -4,4 +4,3 @@ pydantic
 python-dotenv
 # + toutes les autres libs que tu utilises (sqlalchemy, aiomysql, motor, etc.)
 aiomysql
-cloudinary
