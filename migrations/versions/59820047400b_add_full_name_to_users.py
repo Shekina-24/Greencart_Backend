@@ -18,11 +18,13 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade() -> None:
-    op.add_column(
-        "users",
-        sa.Column("full_name", sa.String(length=255), nullable=True)
-    )
+def upgrade():
+    # Vérifie si la colonne existe déjà avant de l'ajouter
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = [col['name'] for col in inspector.get_columns('users')]
+    if 'full_name' not in columns:
+        op.add_column('users', sa.Column('full_name', sa.String(255), nullable=True))
 
 
 def downgrade() -> None:
