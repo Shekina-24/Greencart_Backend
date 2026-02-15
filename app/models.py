@@ -340,3 +340,19 @@ class RefreshToken(Base, TimestampMixin):
     ip_address: Mapped[str | None] = mapped_column(String(45))
 
     user: Mapped[User] = relationship(back_populates="refresh_tokens")
+
+class Donation(Base, TimestampMixin):
+    __tablename__ = "donations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    producer_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    unit: Mapped[str | None] = mapped_column(String(50))
+    pickup_location: Mapped[str | None] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(50), default="available", nullable=False)
+    reserved_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+
+    producer: Mapped["User"] = relationship(foreign_keys=[producer_id])
+    reserved_by: Mapped["User | None"] = relationship(foreign_keys=[reserved_by_id])

@@ -7,7 +7,7 @@ from typing import Literal, Optional
 from .models import OrderStatus, ProducerStatus, ProductStatus, ReviewStatus, UserRole
 
 from datetime import date, datetime, timezone
-from pydantic import AnyHttpUrl, BaseModel, EmailStr, Field, model_validator, model_serializer
+from pydantic import AnyHttpUrl, BaseModel,ConfigDict, EmailStr, Field, model_validator, model_serializer
 from typing import Any
 
 def _dt_to_utc_z(dt: datetime) -> str:
@@ -547,3 +547,18 @@ class PaymentWebhookPayload(BaseModel):
     event: str = Field(pattern="^(payment_succeeded|payment_failed|payment_refunded)$")
     signature: str = Field(min_length=8)
     payload: dict = Field(default_factory=dict)
+
+class DonationCreate(BaseModel):
+    title: str
+    description: str | None = None
+    quantity: int = 1
+    unit: str | None = None
+    pickup_location: str | None = None
+
+class DonationOut(DonationCreate):
+    id: int
+    producer_id: int
+    status: str
+    reserved_by_id: int | None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
